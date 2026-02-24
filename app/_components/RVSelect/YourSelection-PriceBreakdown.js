@@ -54,7 +54,7 @@ export default function PriceBreakdown() {
       <div className="mb-3 rounded-lg bg-emerald-900/40 text-emerald-300 p-3 text-xs flex items-center justify-between border border-emerald-700/40">
         <span>Flex+ savings vs. typical market</span>
         <span className="font-semibold">
-          ${Math.round(saving * totalDate * quantity)} ({savingPercentage}% off)
+          ${saving} ({savingPercentage}% off)
         </span>
       </div>
 
