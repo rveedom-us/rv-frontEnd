@@ -60,7 +60,7 @@ const QualityLevelCard = ({
 
         <div className="hidden sm:flex items-start justify-end shrink-0">
           <h1 className="text-white font-bold text-lg tabular-nums">
-            {qualityScore}
+            ~ {qualityScore}
           </h1>
         </div>
       </div>

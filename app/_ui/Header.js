@@ -18,13 +18,16 @@ export default async function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 bg-slate-900/80 backdrop-blur supports-backdrop-filter:bg-slate-900/60">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-3 py-3 sm:px-6">
+      {/* Added relative here so the mobile dropdown anchors correctly */}
+      <div className="relative mx-auto flex max-w-7xl items-center justify-between px-3 py-3 sm:px-6">
         <div className="flex items-center gap-3">
           <Logo />
         </div>
 
-        {/* nav links */}
-        <NavLinks links={links} />
+        {/* nav links (Desktop) */}
+        <div className="hidden md:block">
+          <NavLinks links={links} />
+        </div>
 
         <div className="hidden items-center gap-2 md:flex">
           <CallButton />
@@ -32,6 +35,7 @@ export default async function Header() {
           {session ? <UserProfile session={session} /> : <SignInWithGoogle />}
         </div>
 
+        {/* Mobile Component */}
         <HeaderMobile links={links} session={session} />
       </div>
     </header>

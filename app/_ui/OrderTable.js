@@ -29,19 +29,32 @@ export default function OrderTable({ data, isAdmin, item_per_page = 4 }) {
 
   return (
     <>
-      <table className="w-full text-sm text-left text-gray-300">
-        <thead className="bg-slate-950 text-gray-400 border-b border-[#334155]">
+      {/* min-w-[1000px] ensures the table columns don't collapse on mobile */}
+      <table className="w-full min-w-[1000px] text-sm text-left text-gray-300">
+        <thead className="bg-slate-950 text-gray-400 border-b border-slate-800">
           <tr>
-            <th className="px-6 py-3 font-medium">ID/Created At</th>
-            <th className="px-6 py-3 font-medium">User Info</th>
-            <th className="px-6 py-3 font-medium">Order Details</th>
-            <th className="px-6 py-3 font-medium">Delivery Dates</th>
-            <th className="px-6 py-3 font-medium">Price Details</th>
-            <th className="px-6 py-3 font-medium">Status</th>
+            <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">
+              ID / Created
+            </th>
+            <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">
+              User Info
+            </th>
+            <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">
+              Order Details
+            </th>
+            <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">
+              Delivery Dates
+            </th>
+            <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">
+              Price Details
+            </th>
+            <th className="px-6 py-4 font-bold uppercase tracking-wider text-[10px]">
+              Status
+            </th>
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="divide-y divide-slate-800">
           {currentPageData.map((item, index) => {
             const remaining = item.price - item.amount_paid;
             const price = getPrice(item.size, item.quality);
@@ -50,49 +63,60 @@ export default function OrderTable({ data, isAdmin, item_per_page = 4 }) {
             return (
               <tr
                 key={item.id}
-                className={`border-b border-[#1E293B] ${
-                  index % 2 === 0 ? "bg-[#0F172A]" : "bg-[#111827]"
-                }`}
+                className={`transition-colors ${
+                  index % 2 === 0 ? "bg-slate-900/30" : "bg-slate-900/10"
+                } hover:bg-slate-800/50`}
               >
-                <th className="px-6 py-4 font-semibold text-gray-200 whitespace-nowrap">
-                  <div>
-                    <p>{item.id}</p>
-                    <p>{new Date(item.created_at).toLocaleString()}</p>
+                <td className="px-6 py-5 whitespace-nowrap">
+                  <div className="flex flex-col">
+                    <span className="font-bold text-cyan-500">#{item.id}</span>
+                    <span className="text-[11px] text-slate-500">
+                      {new Date(item.created_at).toLocaleDateString()}
+                    </span>
                   </div>
-                </th>
-
-                <td className="px-6 py-4">
-                  <p>{item.name}</p>
-                  <p>{item.email}</p>
-                  <p>{item.phone}</p>
                 </td>
 
-                <td className="px-6 py-4">
+                <td className="px-6 py-5 whitespace-nowrap">
+                  <p className="font-medium text-slate-200">{item.name}</p>
+                  <p className="text-xs text-slate-500">{item.email}</p>
+                </td>
+
+                <td className="px-6 py-5 whitespace-nowrap">
                   <TierBadge tierKey={item.quality} />
-                  <p>Size: {item.size}</p>
-                  <p>Qty: x{item.quantity}</p>
-                  <p>Flex Price: ${flexPrice}</p>
+                  <div className="mt-1 text-xs text-slate-400">
+                    Size: <span className="text-slate-200">{item.size}</span> •
+                    Qty:{" "}
+                    <span className="text-slate-200">x{item.quantity}</span>
+                  </div>
                 </td>
 
-                <td className="px-6 py-4">
-                  <p>
-                    {item.startDate} → {item.endDate}
+                <td className="px-6 py-5 whitespace-nowrap">
+                  <p className="text-xs">
+                    {item.startDate}{" "}
+                    <span className="text-slate-600 px-1">→</span>{" "}
+                    {item.endDate}
                   </p>
-                  <p>
-                    Total Date: {tripLengthCalc(item.startDate, item.endDate)}{" "}
-                    days
+                  <p className="text-[10px] font-bold text-cyan-600 uppercase mt-1">
+                    {tripLengthCalc(item.startDate, item.endDate)} Days Total
                   </p>
                 </td>
 
-                <td className="px-6 py-4">
-                  <p>Total Price: ${item.price}</p>
-                  <p>Paid: ${item.amount_paid}</p>
-                  <p>Remaining: ${Math.round(remaining)}</p>
+                <td className="px-6 py-5 whitespace-nowrap">
+                  <p className="text-sm font-bold text-white">${item.price}</p>
+                  <p className="text-[10px] text-slate-500">
+                    Paid: ${item.amount_paid}
+                  </p>
+                  {remaining > 0 && (
+                    <p className="text-[10px] text-rose-400 font-medium">
+                      Due: ${Math.round(remaining)}
+                    </p>
+                  )}
                 </td>
 
-                <td className="px-6 py-4">
+                <td className="px-6 py-5">
                   {isAdmin ? (
                     <button
+                      className="active:scale-95 transition-transform"
                       onClick={() => {
                         setSelectedOrder({
                           id: item.id,
@@ -111,57 +135,57 @@ export default function OrderTable({ data, isAdmin, item_per_page = 4 }) {
             );
           })}
 
-          {/* EMPTY STATE */}
           {totalItems === 0 && (
             <tr>
-              <td colSpan={6} className="text-center py-10 text-gray-400">
-                No orders found.
+              <td
+                colSpan={6}
+                className="text-center py-20 text-slate-500 italic"
+              >
+                No orders found in your history.
               </td>
             </tr>
           )}
         </tbody>
-
-        {/* PAGINATION FOOTER */}
-        {totalItems > 0 && (
-          <tfoot>
-            <tr>
-              <td colSpan={6}>
-                <div className="flex items-center justify-between py-4 px-2">
-                  {/* LEFT SIDE */}
-                  <div className="text-sm opacity-70">
-                    Showing <span className="font-semibold">{start}</span>–
-                    <span className="font-semibold">{end}</span> of{" "}
-                    <span className="font-semibold">{totalItems}</span> entries
-                  </div>
-
-                  {/* RIGHT SIDE */}
-                  <div className="flex items-center gap-3">
-                    <button
-                      onClick={onPrev}
-                      disabled={page === 1}
-                      className="p-2 rounded border bg-gray-100 dark:bg-gray-800 disabled:opacity-40"
-                    >
-                      <ChevronLeft size={18} />
-                    </button>
-
-                    <span className="font-semibold text-sm">
-                      {page} / {totalPages}
-                    </span>
-
-                    <button
-                      onClick={onNext}
-                      disabled={page === totalPages}
-                      className="p-2 rounded border bg-gray-100 dark:bg-gray-800 disabled:opacity-40"
-                    >
-                      <ChevronRight size={18} />
-                    </button>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tfoot>
-        )}
       </table>
+
+      {/* PAGINATION FOOTER - Responsive Stack */}
+      {totalItems > 0 && (
+        <div className="border-t border-slate-800 bg-slate-950/50 p-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="text-[11px] uppercase tracking-widest text-slate-500">
+              Showing{" "}
+              <span className="text-slate-200 font-bold">
+                {start}–{end}
+              </span>{" "}
+              of <span className="text-slate-200 font-bold">{totalItems}</span>{" "}
+              entries
+            </div>
+
+            <div className="flex items-center gap-4">
+              <button
+                onClick={onPrev}
+                disabled={page === 1}
+                className="p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 disabled:opacity-20 hover:bg-slate-700 transition-colors"
+              >
+                <ChevronLeft size={18} />
+              </button>
+
+              <span className="text-xs font-bold tabular-nums">
+                {page} <span className="text-slate-600 mx-1">/</span>{" "}
+                {totalPages}
+              </span>
+
+              <button
+                onClick={onNext}
+                disabled={page === totalPages}
+                className="p-2 rounded-xl border border-slate-700 bg-slate-800 text-slate-400 disabled:opacity-20 hover:bg-slate-700 transition-colors"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <AdminStatusDrawer
         open={showDrawer}
