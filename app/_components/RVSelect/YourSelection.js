@@ -1,6 +1,8 @@
 import VisualCard from "./YourSelection-VisualCard";
 import TripDetails from "./YourSelection-TripDetails";
 import PriceBreakdown from "./YourSelection-PriceBreakdown";
+import YourLocation from "./YourLocation";
+import GuestRequirements from "./GuestRequirements";
 
 // const SIZES = [
 //   {
@@ -71,6 +73,8 @@ export default function YourSelection() {
         <VisualCard />
         <div className="space-y-4">
           <TripDetails />
+          <YourLocation />
+          <GuestRequirements />
           <PriceBreakdown />
 
           <div className="rounded-xl border border-slate-700 p-3 text-xs text-slate-400 bg-slate-900">
