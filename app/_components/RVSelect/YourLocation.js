@@ -1,4 +1,5 @@
 import US_STATES from "@/_lists/UsStates";
+import { Loader, LocateFixed, Search } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 
 const YourLocation = ({ onChange }) => {
@@ -32,7 +33,6 @@ const YourLocation = ({ onChange }) => {
           }),
         {
           headers: {
-            // Required by Nominatim usage policy
             "Accept-Language": "en",
           },
         },
@@ -48,7 +48,6 @@ const YourLocation = ({ onChange }) => {
     }
   }, []);
 
-  // Debounce input so we don't hammer the API on every keystroke
   const handleInputChange = (e) => {
     const value = e.target.value;
     setQuery(value);
@@ -60,12 +59,11 @@ const YourLocation = ({ onChange }) => {
     }, 400);
   };
 
-  // User picks a suggestion
   const handleSelect = (place) => {
+    // Robust check for state name in the Nominatim address object
+    const stateName = place.address?.state?.toLowerCase();
     const stateCode =
-      US_STATES.find(
-        (s) => s.label.toLowerCase() === place.address?.state?.toLowerCase(),
-      )?.value || "";
+      US_STATES.find((s) => s.label.toLowerCase() === stateName)?.value || "";
 
     const selected = {
       formattedAddress: place.display_name,
@@ -81,15 +79,9 @@ const YourLocation = ({ onChange }) => {
 
     if (stateCode) setSelectedState(stateCode);
 
-    stableOnChange({
-      address: place.display_name,
-      lat: selected.lat,
-      lng: selected.lng,
-      state: stateCode,
-    });
+    stableOnChange(selected);
   };
 
-  // Close dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target)) {
@@ -100,88 +92,58 @@ const YourLocation = ({ onChange }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Cleanup debounce on unmount
   useEffect(() => {
     return () => clearTimeout(debounceRef.current);
   }, []);
 
   const mapUrl = selectedPlace
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${selectedPlace.lng - 0.01},${selectedPlace.lat - 0.01},${selectedPlace.lng + 0.01},${selectedPlace.lat + 0.01}&layer=mapnik&marker=${selectedPlace.lat},${selectedPlace.lng}`
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${selectedPlace.lng - 0.005},${selectedPlace.lat - 0.005},${selectedPlace.lng + 0.005},${selectedPlace.lat + 0.005}&layer=mapnik&marker=${selectedPlace.lat},${selectedPlace.lng}`
     : null;
 
   return (
-    <div className="rounded-2xl border border-slate-700 p-4 bg-slate-900">
-      {/* Header */}
-      <h1 className="font-bold text-slate-100">
-        <span>🗺️</span> <span>Your Location</span>
-      </h1>
+    <div className="rounded-2xl border border-slate-700 p-4 bg-slate-900 shadow-xl">
+      <h2 className="font-bold text-slate-100 flex items-center gap-2">
+        <span role="img" aria-label="map">
+          🗺️
+        </span>{" "}
+        Your Location
+      </h2>
 
-      {/* Inputs row */}
-      <div className="mt-5 flex items-start justify-between gap-4">
-        {/* State selector */}
-        <div className="shrink-0">
-          <label htmlFor="state" className="block text-sm text-slate-300">
+      <div className="mt-5 flex flex-col md:flex-row items-start gap-4">
+        {/* State selector (Read-only) */}
+        <div className="w-full md:w-44 shrink-0">
+          <label
+            htmlFor="state"
+            className="block text-xs font-medium text-slate-400"
+          >
             Your State (USA)
           </label>
           <input
             id="state"
-            name="state"
             type="text"
             readOnly
             disabled
-            // Find the matching label for the state code, or show a placeholder
             value={
               US_STATES.find((s) => s.value === selectedState)?.label ||
               "Auto-filled from address"
             }
-            className="mt-3 w-44 rounded-md bg-slate-800/50 text-slate-400 border border-slate-700 px-3 py-2 text-sm cursor-not-allowed"
+            className="mt-2 w-full rounded-md bg-slate-800/40 text-slate-400 border border-slate-700 px-3 py-2 text-sm cursor-not-allowed italic"
           />
         </div>
 
         {/* Address autocomplete */}
-        <div className="flex-1" ref={wrapperRef}>
+        <div className="flex-1 w-full" ref={wrapperRef}>
           <label
             htmlFor="address-input"
-            className="block text-sm text-slate-300"
+            className="block text-xs font-medium text-slate-400"
           >
             Search your address <span className="text-red-500">*</span>
           </label>
-          <div className="relative mt-3">
-            {/* Search / loading icon */}
+          <div className="relative mt-2">
             {isLoading ? (
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400 animate-spin"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v8z"
-                />
-              </svg>
+              <Loader className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-blue-400 animate-spin" />
             ) : (
-              <svg
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
-                />
-              </svg>
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
             )}
 
             <input
@@ -190,50 +152,52 @@ const YourLocation = ({ onChange }) => {
               value={query}
               onChange={handleInputChange}
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
-              placeholder="Start typing your address..."
+              placeholder="Enter street, city, or zip..."
               autoComplete="off"
-              className="w-full bg-slate-800 text-slate-200 placeholder:text-slate-500 border border-slate-600 focus:ring-blue-500 focus:border-blue-500 rounded-md pl-9 pr-3 py-2 text-sm"
+              className="w-full bg-slate-800 text-slate-200 placeholder:text-slate-600 border border-slate-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 rounded-md pl-9 pr-3 py-2 text-sm transition-all"
             />
 
-            {/* Suggestions dropdown */}
             {showSuggestions && suggestions.length > 0 && (
-              <ul className="absolute z-50 mt-1 w-full bg-slate-800 border border-slate-600 rounded-md shadow-lg max-h-60 overflow-y-auto">
+              <ul className="absolute z-50 mt-1 w-full bg-slate-800 border border-slate-600 rounded-md shadow-2xl max-h-60 overflow-y-auto">
                 {suggestions.map((place) => (
                   <li
                     key={place.place_id}
                     onMouseDown={() => handleSelect(place)}
-                    className="px-3 py-2 text-sm text-slate-200 hover:bg-slate-700 cursor-pointer flex items-start gap-2"
+                    className="px-3 py-2.5 text-sm text-slate-200 hover:bg-slate-700 cursor-pointer flex items-start gap-2 border-b border-slate-700/50 last:border-0"
                   >
-                    <span className="mt-0.5 text-slate-400 shrink-0">📍</span>
-                    <span className="line-clamp-2">{place.display_name}</span>
+                    <span className="mt-0.5 text-slate-500 shrink-0">📍</span>
+                    <span className="line-clamp-2 wrap-break-word min-w-0">
+                      {place.display_name}
+                    </span>
                   </li>
                 ))}
-                {/* Nominatim attribution — required by usage policy */}
-                <li className="px-3 py-1.5 text-xs text-slate-500 border-t border-slate-700">
-                  © OpenStreetMap contributors
+                <li className="px-3 py-1.5 text-[10px] text-slate-600 bg-slate-900/50 italic border-t border-slate-700">
+                  Data from OpenStreetMap
                 </li>
               </ul>
             )}
           </div>
 
           {selectedPlace && (
-            <p className="mt-1.5 text-xs text-blue-400 flex items-center gap-1">
-              <span>📍</span>
-              <span className="truncate">{selectedPlace.formattedAddress}</span>
-            </p>
+            <div className="mt-2 text-xs text-blue-400 flex items-start gap-2 animate-in fade-in slide-in-from-top-1">
+              <LocateFixed className="text-blue-500/50 w-4 h-4 mt-0.5 shrink-0" />
+              <span className="line-clamp-3">
+                {selectedPlace.formattedAddress}
+              </span>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Map preview — OpenStreetMap embed, no API key needed */}
+      {/* Map preview */}
       {mapUrl && (
-        <div className="mt-4 rounded-xl overflow-hidden border border-slate-700 h-48">
+        <div className="mt-4 rounded-xl overflow-hidden border border-slate-700 h-40 bg-slate-800 shadow-inner">
           <iframe
             title="location-map"
             src={mapUrl}
             width="100%"
             height="100%"
-            style={{ border: 0 }}
+            className=" opacity-80 hover:opacity-100 transition-opacity"
             loading="lazy"
           />
         </div>
