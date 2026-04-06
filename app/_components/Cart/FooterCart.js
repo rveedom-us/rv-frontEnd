@@ -22,9 +22,13 @@ export default function FooterCart({ session }) {
     quantity,
     startDate,
     endDate,
+    location,
   } = useSelector((state) => state.cart);
   const isSelected =
-    selectedSize && selectedQuality && tripLengthCalc(startDate, endDate) > 3;
+    selectedSize &&
+    selectedQuality &&
+    location &&
+    tripLengthCalc(startDate, endDate) > 3;
 
   const tripDays = tripLengthCalc(startDate, endDate) || 0;
   const discountPct = tripDays >= 30 ? 35 : tripDays >= 7 ? 15 : 0;

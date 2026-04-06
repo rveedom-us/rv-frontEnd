@@ -1,19 +1,23 @@
-import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setGuests } from "@/_lib/store/cartSlice";
 
 const GuestRequirements = ({ onChange }) => {
-  const [values, setValues] = useState({ people: 1, beds: 1, pets: 0 });
+  const dispatch = useDispatch();
+  const values = useSelector((state) => state.cart.guests);
   const PET_FEE = 75;
 
   const handleChange = (field, value) => {
     const rawValue = parseInt(value) || 0;
     const nextValues = { ...values, [field]: rawValue };
 
-    setValues(nextValues);
-
-    onChange?.({
+    // Calculate pet fee immediately for the payload
+    const payload = {
       ...nextValues,
       petFee: nextValues.pets * PET_FEE,
-    });
+    };
+
+    dispatch(setGuests(payload));
+    onChange?.(payload);
   };
 
   return (

@@ -10,6 +10,9 @@ const initialState = {
   totalDate: null,
   quantity: 1,
 
+  location: null,
+  guests: { people: 1, beds: 1, pets: 0, petFee: 0 },
+
   totalPrice: 0,
   flexPrice: 0,
 
@@ -22,7 +25,7 @@ const initialState = {
 
   downPayment: 0,
 
-  deliveryOption: null, // "transport" | "delivery" | null
+  deliveryOption: null,
   deliveryPrice: 0,
 };
 
@@ -38,7 +41,6 @@ const cartSlice = createSlice({
 
     setSelectedQuality: (state, action) => {
       if (state.selectedQuality === action.payload) return;
-
       state.selectedQuality = action.payload;
 
       switch (action.payload) {
@@ -54,7 +56,16 @@ const cartSlice = createSlice({
         default:
           state.qualityScore = "";
       }
+      priceCalc(state);
+    },
 
+    setLocation: (state, action) => {
+      state.location = action.payload;
+    },
+
+    setGuests: (state, action) => {
+      state.guests = action.payload;
+      // This triggers the price recalculation including the petFee
       priceCalc(state);
     },
 
@@ -77,23 +88,12 @@ const cartSlice = createSlice({
       state.quantity = action.payload;
       priceCalc(state);
     },
+
     setDeliveryOption: (state, action) => {
-      const option = action.payload; // "transport" | "delivery" | null
-
+      const option = action.payload;
       if (state.deliveryOption === option) return;
-
       state.deliveryOption = option;
-
-      switch (option) {
-        case "transport":
-          state.deliveryPrice = 0;
-          break;
-        case "delivery":
-          state.deliveryPrice = 250;
-          break;
-        default:
-          state.deliveryPrice = 0;
-      }
+      state.deliveryPrice = option === "delivery" ? 250 : 0;
       priceCalc(state);
     },
   },
@@ -102,6 +102,8 @@ const cartSlice = createSlice({
 export const {
   setSelectedSize,
   setSelectedQuality,
+  setLocation,
+  setGuests,
   setStartDate,
   setEndDate,
   setTotalDate,

@@ -1,18 +1,31 @@
 import US_STATES from "@/_lists/UsStates";
 import { Loader, LocateFixed, Search } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setLocation } from "@/_lib/store/cartSlice";
 
 const YourLocation = ({ onChange }) => {
-  const [selectedState, setSelectedState] = useState("");
-  const [selectedPlace, setSelectedPlace] = useState(null);
-  const [query, setQuery] = useState("");
+  const dispatch = useDispatch();
+  const reduxLocation = useSelector((state) => state.cart.location);
+
+  const [selectedState, setSelectedState] = useState(
+    reduxLocation?.state || "",
+  );
+  const [selectedPlace, setSelectedPlace] = useState(reduxLocation);
+  const [query, setQuery] = useState(reduxLocation?.formattedAddress || "");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const debounceRef = useRef(null);
   const wrapperRef = useRef(null);
 
-  const stableOnChange = useCallback((data) => onChange?.(data), [onChange]);
+  const stableOnChange = useCallback(
+    (data) => {
+      onChange?.(data);
+      dispatch(setLocation(data));
+    },
+    [onChange, dispatch],
+  );
 
   const fetchSuggestions = useCallback(async (value) => {
     if (value.length < 3) {
@@ -60,7 +73,6 @@ const YourLocation = ({ onChange }) => {
   };
 
   const handleSelect = (place) => {
-    // Robust check for state name in the Nominatim address object
     const stateName = place.address?.state?.toLowerCase();
     const stateCode =
       US_STATES.find((s) => s.label.toLowerCase() === stateName)?.value || "";
@@ -104,13 +116,12 @@ const YourLocation = ({ onChange }) => {
     <div className="rounded-2xl border border-slate-700 p-4 bg-slate-900 shadow-xl">
       <h2 className="font-bold text-slate-100 flex items-center gap-2">
         <span role="img" aria-label="map">
-          🗺️
+          ️🗺️
         </span>{" "}
         Your Location
       </h2>
 
       <div className="mt-5 flex flex-col md:flex-row items-start gap-4">
-        {/* State selector (Read-only) */}
         <div className="w-full md:w-44 shrink-0">
           <label
             htmlFor="state"
@@ -131,7 +142,6 @@ const YourLocation = ({ onChange }) => {
           />
         </div>
 
-        {/* Address autocomplete */}
         <div className="flex-1 w-full" ref={wrapperRef}>
           <label
             htmlFor="address-input"
@@ -180,8 +190,8 @@ const YourLocation = ({ onChange }) => {
 
           {selectedPlace && (
             <div className="mt-2 text-xs text-blue-400 flex items-start gap-2 animate-in fade-in slide-in-from-top-1">
-              <LocateFixed className="text-blue-500/50 w-4 h-4 mt-0.5 shrink-0" />
-              <span className="line-clamp-3">
+              <LocateFixed className="text-slate-500 w-4 h-4 mt-0.5 shrink-0" />
+              <span className="line-clamp-4 wrap-break-word">
                 {selectedPlace.formattedAddress}
               </span>
             </div>
@@ -189,7 +199,6 @@ const YourLocation = ({ onChange }) => {
         </div>
       </div>
 
-      {/* Map preview */}
       {mapUrl && (
         <div className="mt-4 rounded-xl overflow-hidden border border-slate-700 h-40 bg-slate-800 shadow-inner">
           <iframe

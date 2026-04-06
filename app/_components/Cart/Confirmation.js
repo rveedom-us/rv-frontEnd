@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import TierBadge from "@/_ui/TierBadge";
 import QualityBadge from "@/_ui/QualityBadge";
-import { X } from "lucide-react";
+import { X, MapPin, Users } from "lucide-react"; // Added icons for the new section
 import { createOrder } from "@/_lib/api/orders";
 import { useState } from "react";
 
@@ -21,6 +21,8 @@ export default function Confirmation({ open, onClose, session }) {
     savingPercentage,
     tax,
     downPayment,
+    location,
+    guests,
   } = useSelector((state) => state.cart);
 
   const [tripDescription, setTripDescription] = useState("");
@@ -41,6 +43,8 @@ export default function Confirmation({ open, onClose, session }) {
           price: totalPrice,
           startDate: startDate,
           endDate: endDate,
+          location: location, // Pass location to order
+          guests: guests, // Pass guests to order
           tripDescription: trimmedDescription || null,
           downPayment: downPayment,
         },
@@ -142,6 +146,48 @@ export default function Confirmation({ open, onClose, session }) {
                     <QualityBadge quality={qualityScore} />
                   </div>
                 </div>
+
+                {/* NEW LOCATION AND GUEST DATA SECTION */}
+                <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
+                  <div>
+                    <p className="text-gray-400 flex items-center gap-1.5 text-xs uppercase tracking-wider">
+                      <MapPin size={14} className="text-cyan-400" /> Destination
+                      / Pickup
+                    </p>
+                    <p className="bg-[#0a1626] p-2.5 rounded-md mt-1.5 border border-white/5 text-cyan-50 font-medium">
+                      {location?.formattedAddress || "No location selected"}
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="bg-[#0a1626] p-2 rounded border border-white/5 flex flex-col items-center">
+                      <p className="text-[10px] text-gray-400 uppercase">
+                        People
+                      </p>
+                      <p className="font-bold text-white">
+                        {guests?.people || 1}
+                      </p>
+                    </div>
+                    <div className="bg-[#0a1626] p-2 rounded border border-white/5 flex flex-col items-center">
+                      <p className="text-[10px] text-gray-400 uppercase">
+                        Beds
+                      </p>
+                      <p className="font-bold text-white">
+                        {guests?.beds || 1}
+                      </p>
+                    </div>
+                    <div className="bg-[#0a1626] p-2 rounded border border-white/5 flex flex-col items-center">
+                      <p className="text-[10px] text-gray-400 uppercase">
+                        Pets
+                      </p>
+                      <p
+                        className={`font-bold ${guests?.pets > 0 ? "text-emerald-400" : "text-white"}`}
+                      >
+                        {guests?.pets || 0}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -172,7 +218,7 @@ export default function Confirmation({ open, onClose, session }) {
                   sync you up with your ideal RV and experience (optional)
                 </p>
                 <textarea
-                  className="ring ring-white w-full h-40 mb-3 bg-slate-800 text-white p-3 rounded-md"
+                  className="ring ring-white w-full h-40 mb-3 bg-slate-800 text-white p-3 rounded-md focus:outline-none focus:ring-cyan-500 transition-all"
                   value={tripDescription}
                   onChange={(e) => setTripDescription(e.target.value)}
                   placeholder="Tell us about your trip..."

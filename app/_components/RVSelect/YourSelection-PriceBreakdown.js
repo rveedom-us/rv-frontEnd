@@ -8,6 +8,7 @@ import {
   Star,
   Truck,
   Info,
+  Users,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setDeliveryOption } from "@/_lib/store/cartSlice";
@@ -15,6 +16,7 @@ import { setDeliveryOption } from "@/_lib/store/cartSlice";
 export default function PriceBreakdown() {
   const dispatch = useDispatch();
 
+  // Added 'guests' to the destructured state from Redux
   const {
     saving,
     savingPercentage,
@@ -27,7 +29,9 @@ export default function PriceBreakdown() {
     quantity,
     deliveryOption,
     deliveryPrice,
+    guests, //
   } = useSelector((state) => state.cart);
+
   const handleDeliverySelect = (option, event) => {
     dispatch(setDeliveryOption(option));
 
@@ -43,12 +47,14 @@ export default function PriceBreakdown() {
     },
     { label: "Cleaning & Prep", value: cleaningPrepFee, Icon: Shield },
     { label: `Tax (${tax}%)`, value: taxAmount, Icon: Percent },
+    // This now works because 'guests' is defined above
+    { label: `Pet Fee`, value: guests?.petFee || 0, Icon: Users },
     { label: `Delivery`, value: deliveryPrice, Icon: Truck },
     { label: `Quantity`, value: quantity, Icon: Calculator },
   ];
 
   return (
-    <div className="rounded-2xl border border-slate-700 p-4 bg-slate-900">
+    <div className="rounded-2xl border border-slate-700 p-4 bg-slate-900 text-slate-100">
       <h3 className="font-semibold mb-3">Price Breakdown</h3>
 
       <div className="mb-3 rounded-lg bg-emerald-900/40 text-emerald-300 p-3 text-xs flex items-center justify-between border border-emerald-700/40">

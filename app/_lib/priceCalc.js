@@ -17,6 +17,7 @@ export function priceCalc(state) {
   const days = Number(state.totalDate || 1);
   const qty = Number(state.quantity || 1);
   const delivery = Number(state.deliveryPrice || 0);
+  const petFee = Number(state.guests?.petFee || 0); // Added pet fee variable
 
   // Rule:
   // 7+ days & <30 => 15% off
@@ -25,6 +26,7 @@ export function priceCalc(state) {
   let discountRate = 0;
   if (days >= 30) discountRate = Number(monthlyDiscount ?? 0.35);
   else if (days >= 7) discountRate = Number(weeklyDiscount ?? 0.15);
+
   const rentalSubtotal = flexPrice * days * qty;
   const discountAmount = rentalSubtotal * discountRate;
   const discountedRental = rentalSubtotal - discountAmount;
@@ -32,7 +34,12 @@ export function priceCalc(state) {
   state.taxAmount = discountedRental * (state.tax / 100);
 
   state.totalPrice =
-    discountedRental + state.taxAmount + state.cleaningPrepFee + delivery;
+    discountedRental +
+    state.taxAmount +
+    state.cleaningPrepFee +
+    delivery +
+    petFee;
+
   state.downPayment = Math.round(state.totalPrice * 0.05);
   const marketTotal = marketPrice * days * qty;
   state.saving = Math.round(marketTotal - discountedRental);
