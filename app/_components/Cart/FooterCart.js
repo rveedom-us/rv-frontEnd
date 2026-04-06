@@ -95,7 +95,10 @@ export default function FooterCart({ session }) {
               Est. Total (x{quantity})
             </div>
             <div className="text-xl font-bold text-white tabular-nums">
-              ${Math.round(totalPrice)}
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(totalPrice)}
             </div>
           </div>
           {isSelected &&

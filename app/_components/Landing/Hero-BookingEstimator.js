@@ -6,6 +6,8 @@ import { sizes } from "@/_lists/sizes";
 import QualityBadge from "@/_ui/QualityBadge";
 import QualityBar from "@/_ui/QualityBar";
 import TripDetails from "../RVSelect/YourSelection-TripDetails";
+import YourLocation from "../RVSelect/YourLocation";
+import GuestRequirements from "../RVSelect/GuestRequirements";
 
 export default function BookingEstimator() {
   const dispatch = useDispatch();
@@ -125,8 +127,10 @@ export default function BookingEstimator() {
           <QualityBar qualityScore={qualityScore} />
         </div>
       </div>
-      <div className="text-white">
+      <div className="text-white flex flex-col gap-4">
         <TripDetails />
+        <YourLocation />
+        {/* <GuestRequirements /> */}
       </div>
 
       {/* Price Section */}

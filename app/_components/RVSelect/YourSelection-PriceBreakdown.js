@@ -32,6 +32,14 @@ export default function PriceBreakdown() {
     guests, //
   } = useSelector((state) => state.cart);
 
+  // USA Financial Formatter Helper
+  const formatUSD = (val) =>
+    new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 2,
+    }).format(val || 0);
+
   const handleDeliverySelect = (option, event) => {
     dispatch(setDeliveryOption(option));
 
@@ -41,7 +49,7 @@ export default function PriceBreakdown() {
 
   const rows = [
     {
-      label: `Nightly x $${flexPrice}`,
+      label: `Nightly x ${formatUSD(flexPrice)}`,
       value: flexPrice * totalDate,
       Icon: Star,
     },
@@ -60,7 +68,7 @@ export default function PriceBreakdown() {
       <div className="mb-3 rounded-lg bg-emerald-900/40 text-emerald-300 p-3 text-xs flex items-center justify-between border border-emerald-700/40">
         <span>Flex+ savings vs. typical market</span>
         <span className="font-semibold">
-          ${saving} ({savingPercentage}% off)
+          {formatUSD(saving)} ({savingPercentage}% off)
         </span>
       </div>
 
@@ -76,7 +84,7 @@ export default function PriceBreakdown() {
             <div className="tabular-nums">
               {r.label === "Quantity"
                 ? `x${Math.round(r.value)}`
-                : `$${Math.round(r.value)}`}
+                : formatUSD(r.value)}
             </div>
           </div>
         ))}
@@ -98,7 +106,7 @@ export default function PriceBreakdown() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-emerald-400">
-                    ${deliveryPrice}
+                    {formatUSD(deliveryPrice)}
                   </span>
                   <svg
                     className="w-4 h-4 transition-transform group-open:rotate-180"
@@ -158,7 +166,7 @@ export default function PriceBreakdown() {
                       : "Delivery Service Included"}
                   </p>
                   <p className="text-sm font-semibold text-emerald-400 mt-0.5">
-                    ${deliveryPrice}
+                    {formatUSD(deliveryPrice)}
                   </p>
                 </div>
               </div>
@@ -171,7 +179,7 @@ export default function PriceBreakdown() {
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-cyan-400" /> Estimated Total
           </div>
-          <div className="tabular-nums">${Math.round(totalPrice)}</div>
+          <div className="tabular-nums">{formatUSD(totalPrice)}</div>
         </div>
 
         <p className="text-xs text-slate-400">

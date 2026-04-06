@@ -22,7 +22,7 @@ const GuestRequirements = ({ onChange }) => {
 
   return (
     <div className="rounded-2xl border border-slate-700 p-6 bg-slate-900 text-slate-100 ">
-      <h2 className="text-lg font-bold mb-6 flex items-center gap-2">
+      <h2 className=" font-bold mb-6 flex items-center gap-2">
         <span>👥</span> Guest Requirements
       </h2>
 

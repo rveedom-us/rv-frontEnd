@@ -132,7 +132,10 @@ export default function Confirmation({ open, onClose, session }) {
                   <div>
                     <p className="text-gray-400 mb-1">Total Price</p>
                     <p className="bg-[#0a1626] p-2 rounded-md mt-1 border border-white/5">
-                      ${Math.round(totalPrice * 100) / 100}
+                      {new Intl.NumberFormat("en-US", {
+                        style: "currency",
+                        currency: "USD",
+                      }).format(totalPrice)}
                     </p>
                   </div>
                 </div>
@@ -235,7 +238,12 @@ export default function Confirmation({ open, onClose, session }) {
             className="w-full bg-linear-to-r from-cyan-400 to-emerald-500 text-black font-semibold px-5 py-4 md:py-3 rounded-lg shadow-lg hover:opacity-90 transition flex items-center justify-center gap-2 text-lg md:text-base"
           >
             <span>Lock in your RV</span>
-            <span className="font-bold">• ${Math.round(downPayment)}</span>
+            <span className="font-bold">
+              {new Intl.NumberFormat("en-US", {
+                style: "currency",
+                currency: "USD",
+              }).format(downPayment)}
+            </span>
           </button>
         </div>
       </div>

@@ -29,7 +29,7 @@ export const sizes = {
     label: "Extra Large (XL)",
     length: "35–40 ft",
     sleeps: "1-6",
-    rig: "Travel Trailer / Fifth Wheel",
+    rig: "Fifth Wheel / Motorcoach",
     benefits: [
       "Bigger groups & comfort features",
       "Spacious living area",

@@ -3,11 +3,15 @@ import { Info } from "lucide-react";
 import { tripLengthCalc } from "@/_lib/tripLengthCalc";
 import { useDispatch, useSelector } from "react-redux";
 import { setTotalDate, setStartDate, setEndDate } from "@/_lib/store/cartSlice";
+import { useRef } from "react";
 
 export default function TripDetails() {
   const { totalDate, startDate, endDate } = useSelector((state) => state.cart);
   const today = new Date().toISOString().split("T")[0];
   const dispatch = useDispatch();
+
+  // Create a ref for the ending date input
+  const endDateInputRef = useRef(null);
 
   const dateInputClasses =
     "bg-slate-900 text-slate-100 border border-slate-700 rounded-md px-2 py-1 focus:ring-2 focus:ring-cyan-400 outline-none transition duration-150 ease-in-out [color-scheme:dark]";
@@ -15,11 +19,20 @@ export default function TripDetails() {
   const handleStartChange = (value) => {
     dispatch(setStartDate(value));
 
+    if (value && endDateInputRef.current) {
+      if (typeof endDateInputRef.current.showPicker === "function") {
+        endDateInputRef.current.showPicker();
+      } else {
+        endDateInputRef.current.focus();
+      }
+    }
+
     if (endDate && new Date(value) > new Date(endDate)) {
       dispatch(setEndDate(""));
       dispatch(setTotalDate(0));
     } else if (startDate && endDate) {
-      calcTripLength(value, endDate);
+      const length = tripLengthCalc(value, endDate);
+      dispatch(setTotalDate(length));
     }
   };
 
@@ -59,6 +72,7 @@ export default function TripDetails() {
         <label className="flex flex-col gap-2">
           <span className="text-slate-300">Ending Date</span>
           <input
+            ref={endDateInputRef}
             type="date"
             min={startDate || today}
             value={endDate || ""}
