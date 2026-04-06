@@ -26,7 +26,7 @@ export default function Why() {
           <Card
             icon={<DollarSign className="h-5 w-5" />}
             title="Better value"
-            text="Dynamic owner competition and streamlined ops unlock lower pricing without sacrificing quality."
+            text="Dynamic owner competition and streamlined ops unlock lower pricing without sacrificing tier."
           />
           <Card
             icon={<ShieldCheck className="h-5 w-5" />}

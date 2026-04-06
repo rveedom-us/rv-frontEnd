@@ -42,11 +42,11 @@ const QualityLevel = () => {
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 ">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">
-            Pick a Quality Level
+            Pick a Tier
           </h1>
           <p className="text-sm text-slate-400 mt-1 ">
             Basic (1 diamond), Standard (2 diamond), Premium (3 diamond). See
-            how we score quality below.
+            how we score tier below.
           </p>
         </div>
 

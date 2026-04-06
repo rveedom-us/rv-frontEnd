@@ -43,9 +43,7 @@ const QualityScore = () => {
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 ">
         <div className="rounded-2xl border border-slate-700 p-4 bg-slate-900">
           <div className="flex items-center justify-between">
-            <h1 className="font-semibold text-white text-[16px]">
-              Quality Score
-            </h1>
+            <h1 className="font-semibold text-white text-[16px]">Tier Score</h1>
             <QualityBadge quality={qualityScore} />
           </div>
 

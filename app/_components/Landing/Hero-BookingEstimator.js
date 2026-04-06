@@ -104,7 +104,7 @@ export default function BookingEstimator() {
       <div className="mt-4 mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className="rounded-xl border border-white/10 bg-white/5 p-3 col-span-3">
           <label className="flex items-center justify-between text-xs text-white/70">
-            Quality
+            Tier
             <span className="text-white">
               <QualityBadge quality={qualityScore} />
             </span>

@@ -23,7 +23,7 @@ export default function Page() {
           <div className="flex items-center gap-3">
             <Sparkles className="h-10 w-10 text-cyan-300" />
             <h1 className="text-xl md:text-4xl font-bold tracking-tight flex items-center gap-3 text-white">
-              Choose Your RV — Size &amp; Quality
+              Choose Your RV — Size &amp; Tier
             </h1>
           </div>
 

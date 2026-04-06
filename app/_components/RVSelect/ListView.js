@@ -69,7 +69,7 @@ export default function ListView() {
                   <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-900/40 text-emerald-300 border border-emerald-700/50">
-                        Quality Score {t.qualityScore}
+                        Tier Score {t.qualityScore}
                       </span>
 
                       <TierBadge tierKey={tKey} />

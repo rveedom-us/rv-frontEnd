@@ -65,7 +65,7 @@ export default function YourSelection() {
         </h2>
         <p className="text-sm text-slate-400 mt-1">
           Sample photos & profile shown; actual RV will match your chosen
-          size/quality and may vary.
+          size/Tier and may vary.
         </p>
       </div>
 

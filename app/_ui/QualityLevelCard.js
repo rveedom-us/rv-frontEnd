@@ -36,7 +36,7 @@ const QualityLevelCard = ({
 
         <div className="flex items-center justify-between sm:block sm:text-right shrink-0">
           <span className="text-[10px] sm:text-xs text-slate-500">
-            Quality Score
+            Tier Score
           </span>
           <span className="sm:hidden text-white font-bold tabular-nums">
             {qualityScore}
