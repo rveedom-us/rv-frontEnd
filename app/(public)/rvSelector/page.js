@@ -1,5 +1,4 @@
 "use client";
-
 import { useState } from "react";
 import { Sparkles } from "lucide-react";
 import { useSelector } from "react-redux";
@@ -11,14 +10,25 @@ import QualityScore from "@/_components/RVSelect/QualityScore";
 import YourSelection from "@/_components/RVSelect/YourSelection";
 import ListViewCard from "@/_components/RVSelect/ListView";
 
+const hashToView = {
+  "#Standard-View": "basic",
+  "#Matrix-View": "matrix",
+  "#List-View": "list",
+};
+
+const getInitialView = () => {
+  if (typeof window === "undefined") return "basic";
+  return hashToView[window.location.hash] ?? "basic";
+};
+
 export default function Page() {
   const { selectedSize, selectedQuality } = useSelector((state) => state.cart);
   const isSelected = selectedSize && selectedQuality;
-  const [view, setView] = useState("basic");
+  const [view, setView] = useState(getInitialView);
 
   return (
     <section className="bg-[#020618] min-h-screen overflow-hidden pb-28">
-      <div className="pt-10  container mx-auto max-w-7xl px-4 sm:px-6 flex flex-col gap-8">
+      <div className="pt-10 container mx-auto max-w-7xl px-4 sm:px-6 flex flex-col gap-8">
         <div className="flex items-center justify-between sm:flex-row flex-col sm:gap-0 gap-5">
           <div className="flex items-center gap-3">
             <Sparkles className="h-10 w-10 text-cyan-300" />
@@ -26,10 +36,8 @@ export default function Page() {
               Choose Your RV — Size &amp; Tier
             </h1>
           </div>
-
           <RVSelectNav handleProjectShow={setView} activeView={view} />
         </div>
-
         <div className="transition-all duration-500 ease-in-out">
           {view === "basic" && (
             <div className="animate-fadeIn space-y-6">
@@ -37,20 +45,17 @@ export default function Page() {
               <QualityLevel />
             </div>
           )}
-
           {view === "matrix" && (
             <div className="animate-popIn">
               <FullMatrix />
             </div>
           )}
-
           {view === "list" && (
             <div className="animate-fadeIn text-white text-lg p-6">
               <ListViewCard />
             </div>
           )}
         </div>
-
         {isSelected && (
           <>
             <QualityScore />
