@@ -122,7 +122,7 @@ const YourLocation = ({ onChange }) => {
       </h2>
 
       <div className="mt-5 flex flex-col md:flex-row items-start gap-4">
-        <div className="w-full md:w-44 shrink-0">
+        {/* <div className="w-full md:w-44 shrink-0">
           <label
             htmlFor="state"
             className="block text-xs font-medium text-slate-400"
@@ -140,7 +140,7 @@ const YourLocation = ({ onChange }) => {
             }
             className="mt-2 w-full rounded-md bg-slate-800/40 text-slate-400 border border-slate-700 px-3 py-2 text-sm cursor-not-allowed italic"
           />
-        </div>
+        </div> */}
 
         <div className="flex-1 w-full" ref={wrapperRef}>
           <label

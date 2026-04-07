@@ -2,8 +2,14 @@ import { CheckCircle2, Clock, ShieldCheck, Star, Trophy } from "lucide-react";
 import BookingEstimator from "./Hero-BookingEstimator";
 import BookFlexButton from "@/_ui/BookFlexButton";
 import Pill from "@/_ui/Pill";
+import { LayoutGrid, List, Maximize } from "lucide-react";
 
 export default function Hero() {
+  const views = [
+    { name: "Standard", href: "#Standard-View", icon: LayoutGrid },
+    { name: "Matrix", href: "#Matrix-View", icon: Maximize },
+    { name: "List", href: "#List-View", icon: List },
+  ];
   return (
     <section className="relative overflow-hidden border-b border-white/10 bg-[radial-gradient(80%_50%_at_50%_-10%,rgba(34,211,238,.25),transparent_70%),linear-gradient(180deg,#0b1220_0%,#0a0f1a_100%)]">
       <div className="absolute -left-[25%] top-20 h-72 w-[50%] rounded-full bg-cyan-500/20 blur-3xl" />
@@ -53,6 +59,27 @@ export default function Hero() {
             <Pill icon={<Star className="h-4 w-4 text-cyan-300" />}>
               Top-rated RVs
             </Pill>
+          </div>
+
+          <div className="mt-10">
+            <h1 className="text-md italic text-white/30">Choose your layout</h1>
+            <div className=" flex flex-wrap items-center gap-4 mt-3">
+              {views.map((view, i) => (
+                <div key={view.name} className="flex items-center gap-4">
+                  <a
+                    href={`/rvSelector${view.href}`}
+                    className="group flex items-center gap-2 text-lg font-medium text-white/50 transition-all hover:text-cyan-300"
+                  >
+                    <view.icon className="h-5 w-5 transition-transform group-hover:scale-110" />
+                    {view.name}
+                  </a>
+                  {/* Render dot separator for all except last item */}
+                  {i !== views.length - 1 && (
+                    <span className="h-1 w-1 rounded-full bg-white/20" />
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </div>
 
