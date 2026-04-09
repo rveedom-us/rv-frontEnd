@@ -53,12 +53,12 @@ export default function HeaderMobile({ links, session }) {
         className={`absolute left-0 top-full z-50 w-full transition-all duration-300 ease-in-out ${
           open
             ? "translate-y-0 opacity-100 pointer-events-auto"
-            : "-translate-y-4 opacity-0 pointer-events-none" // Slight upward slide
+            : "-translate-y-4 opacity-0 pointer-events-none"
         }`}
       >
-        <nav className="mx-auto max-w-7xl px-3 pb-4 sm:px-6">
+        <nav className="mx-auto max-w-7xl sm:px-6 h-screen">
           {/* BEAUTIFUL BOX DESIGN WITH BACKDROP BLUR */}
-          <div className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/90 backdrop-blur-xl p-3 shadow-2xl animate-in fade-in-0 slide-in-from-top-1 duration-300">
+          <div className="flex flex-col gap-1 rounded-2xl border border-white/10 bg-slate-900/90 backdrop-blur-xl p-3 shadow-2xl animate-in fade-in-0 slide-in-from-top-1 duration-300 h-screen">
             {/* Links Section with Staggered Reveal */}
             <div className="flex flex-col gap-1.5 pt-1">
               {links.map((l, index) => (
@@ -101,7 +101,7 @@ export default function HeaderMobile({ links, session }) {
                 ) : (
                   <div
                     onClick={closeMenu}
-                    className="w-full flex justify-center py-1 active:scale-[0.98] transition-transform"
+                    className="w-full flex items-center justify-center py-1 active:scale-[0.98] transition-transform"
                   >
                     <SignInWithGoogle />
                   </div>

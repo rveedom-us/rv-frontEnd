@@ -39,7 +39,7 @@ const QualityLevelCard = ({
             Tier Score
           </span>
           <span className="sm:hidden text-white font-bold tabular-nums">
-            {qualityScore}
+            ~ {qualityScore}
           </span>
         </div>
       </div>
