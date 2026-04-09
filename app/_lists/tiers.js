@@ -54,8 +54,8 @@ export const tiers = {
     ],
     benefits: [
       "High comfort standard",
-      "Modern interiors &amp; finishes",
-      "Feature‑forward package",
+      "Modern interiors finishes",
+      "Feature-rich packages",
       "Exceptional overall condition",
     ],
   },

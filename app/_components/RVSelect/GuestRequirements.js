@@ -20,6 +20,26 @@ const GuestRequirements = ({ onChange }) => {
     onChange?.(payload);
   };
 
+  const handleInputFocus = (e) => {
+    // Select all text when focused to easily replace with new number
+    e.target.select();
+  };
+
+  const handleInputKeyDown = (e) => {
+    const allowedKeys = [
+      "Backspace",
+      "Delete",
+      "ArrowLeft",
+      "ArrowRight",
+      "Tab",
+    ];
+    const isNumber = /^\d$/.test(e.key);
+
+    if (!isNumber && !allowedKeys.includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="rounded-2xl border border-slate-700 p-6 bg-slate-900 text-slate-100 ">
       <h2 className=" font-bold mb-6 flex items-center gap-2">
@@ -44,9 +64,11 @@ const GuestRequirements = ({ onChange }) => {
             <input
               type="number"
               min={item.min}
-              value={values[item.id]}
+              value={values[item.id] || ""}
               onChange={(e) => handleChange(item.id, e.target.value)}
-              className="w-20 bg-slate-800 border border-slate-600 rounded-md px-3 py-2 text-center focus:ring-blue-500 focus:outline-none transition-colors"
+              onFocus={handleInputFocus}
+              onKeyDown={handleInputKeyDown}
+              className="w-20 bg-slate-800 border border-slate-600 rounded-md px-3 py-2 text-center focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none transition-all duration-200 hover:border-slate-500"
             />
           </div>
         ))}
