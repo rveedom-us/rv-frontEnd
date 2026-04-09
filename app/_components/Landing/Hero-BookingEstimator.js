@@ -130,6 +130,7 @@ export default function BookingEstimator() {
       <div className="text-white flex flex-col gap-4">
         <TripDetails />
         <YourLocation />
+        <GuestRequirements />
         {/* <GuestRequirements /> */}
       </div>
 
