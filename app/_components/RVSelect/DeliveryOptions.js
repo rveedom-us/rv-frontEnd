@@ -79,7 +79,7 @@ const DeliveryOptions = () => {
                 className="w-full text-left px-3 py-3 hover:bg-slate-700 flex justify-between items-center text-sm"
               >
                 <span>Add Delivery, Setup & Pickup</span>
-                <span className="font-semibold text-emerald-400">$350</span>
+                <span className="font-semibold text-emerald-400">$250</span>
               </button>
             </li>
           </ul>
