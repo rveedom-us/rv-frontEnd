@@ -93,7 +93,7 @@ const cartSlice = createSlice({
       const option = action.payload;
       if (state.deliveryOption === option) return;
       state.deliveryOption = option;
-      state.deliveryPrice = option === "delivery" ? 250 : 0;
+      state.deliveryPrice = option === "delivery" ? 350 : 0;
       priceCalc(state);
     },
   },

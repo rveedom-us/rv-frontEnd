@@ -11,7 +11,7 @@ export default function QualityBadge({ quality }) {
 
   return (
     <span className={`text-[10px] px-2 py-0.5 rounded-full border ${color}`}>
-      Tier {quality}
+      {quality} RVS
     </span>
   );
 }

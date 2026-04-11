@@ -141,11 +141,11 @@ export default function Confirmation({ open, onClose, session }) {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="text-gray-400 mb-1">Preferred Quality</p>
+                    <p className="text-gray-400 mb-1">Preferred Tier</p>
                     <TierBadge tierKey={selectedQuality} />
                   </div>
                   <div>
-                    <p className="text-gray-400 mb-2">Quality Level</p>
+                    <p className="text-gray-400 mb-2">Score</p>
                     <QualityBadge quality={qualityScore} />
                   </div>
                 </div>
