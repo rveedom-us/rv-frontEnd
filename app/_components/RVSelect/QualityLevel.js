@@ -38,7 +38,7 @@ const QualityLevel = () => {
   }, [selectedQuality]);
 
   return (
-    <section className="bg-slate-950/60 pt-10">
+    <section id="qualitylevel" className="bg-slate-950/60 pt-10">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 ">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-white">

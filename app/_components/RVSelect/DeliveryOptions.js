@@ -79,7 +79,7 @@ const DeliveryOptions = () => {
                 className="w-full text-left px-3 py-3 hover:bg-slate-700 flex justify-between items-center text-sm"
               >
                 <span>Add Delivery, Setup & Pickup</span>
-                <span className="font-semibold text-emerald-400">$250</span>
+                <span className="font-semibold text-emerald-400">$350</span>
               </button>
             </li>
           </ul>
@@ -95,7 +95,7 @@ const DeliveryOptions = () => {
               <div className="invisible group-hover/tooltip:visible opacity-0 group-hover/tooltip:opacity-100 transition-opacity absolute left-0 top-full w-64 bg-slate-950 text-slate-200 text-xs rounded-lg p-3 shadow-xl z-20 border border-slate-700 mt-1">
                 {deliveryOption === "transport"
                   ? "It is required for driver to show proof of insurance for the added tow vehicle to their policy and present prior to pickup."
-                  : "We will include delivery, full setup of the RV so it's ready for you upon arrival, and pickup at the end of your trip. Our minimum is $250 and prices are subject to change based on availability and destination."}
+                  : "We will include delivery, full setup of the RV so it's ready for you upon arrival, and pickup at the end of your trip. Our minimum is $350 and prices are subject to change based on availability and destination."}
               </div>
             </div>
             <div className="flex-1">

@@ -1,5 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
+"use client";
+
 import { Check } from "lucide-react";
+import { useEffect } from "react";
 
 const PickSizeCard = ({
   label,
@@ -11,6 +14,21 @@ const PickSizeCard = ({
   isSelected,
   onClick,
 }) => {
+  // Auto-scroll to QualityLevel when this card is selected
+  useEffect(() => {
+    if (isSelected) {
+      const qualitySection = document.getElementById("qualitylevel");
+      if (qualitySection) {
+        setTimeout(() => {
+          qualitySection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 100);
+      }
+    }
+  }, [isSelected]);
+
   return (
     <div
       onClick={onClick}
@@ -19,7 +37,6 @@ const PickSizeCard = ({
       }`}
     >
       <div className="relative">
-        {/* image (optional) */}
         {img ? (
           <img
             src={img}
@@ -34,16 +51,14 @@ const PickSizeCard = ({
           </div>
         )}
 
-        {/* top text */}
         <div className="absolute bottom-3 left-3">
           <h1 className="text-sm opacity-90 text-white font-bold">{label}</h1>
-          <p className="text-xs opacity-80 text-white ">
+          <p className="text-xs opacity-80 text-white">
             {rig} . {length} . {sleeps}
           </p>
         </div>
       </div>
 
-      {/* details */}
       <div className="p-4 text-white/80 space-y-1 text-sm">
         {benefits.map((benefit, index) => (
           <div key={index} className="flex items-center gap-2">
