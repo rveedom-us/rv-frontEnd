@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { Sparkles } from "lucide-react";
 import { useSelector } from "react-redux";
 import RVSelectNav from "@/_ui/RvSelectNav";
@@ -23,21 +24,44 @@ const getInitialView = () => {
 
 export default function Page() {
   const { selectedSize, selectedQuality } = useSelector((state) => state.cart);
-  const isSelected = selectedSize && selectedQuality;
+  const isSelected = !!(selectedSize && selectedQuality);
   const [view, setView] = useState(getInitialView);
+
+  const yourSelectionRef = useRef(null);
+
+  // Global Scroll Logic: Executes regardless of which View is active
+  useEffect(() => {
+    if (isSelected) {
+      const frameId = requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (yourSelectionRef.current) {
+            yourSelectionRef.current.scrollIntoView({
+              behavior: "smooth",
+              block: "start",
+            });
+          }
+        });
+      });
+
+      return () => cancelAnimationFrame(frameId);
+    }
+  }, [isSelected]);
 
   return (
     <section className="bg-[#020618] min-h-screen overflow-hidden pb-28">
       <div className="pt-10 container mx-auto max-w-7xl px-4 sm:px-6 flex flex-col gap-8">
+        {/* Header */}
         <div className="flex items-center justify-between sm:flex-row flex-col sm:gap-0 gap-5">
           <div className="flex items-center gap-3">
             <Sparkles className="h-10 w-10 text-cyan-300" />
-            <h1 className="text-xl md:text-4xl font-bold tracking-tight flex items-center gap-3 text-white">
+            <h1 className="text-xl md:text-4xl font-bold tracking-tight text-white">
               Choose Your RV - Size & Tier
             </h1>
           </div>
           <RVSelectNav handleProjectShow={setView} activeView={view} />
         </div>
+
+        {/* View Switcher Container */}
         <div className="transition-all duration-500 ease-in-out">
           {view === "basic" && (
             <div className="animate-fadeIn space-y-6">
@@ -47,7 +71,10 @@ export default function Page() {
           )}
           {view === "matrix" && (
             <div className="animate-popIn">
-              <FullMatrix />
+              {/* Added scroll-mt to the matrix itself for internal navigation */}
+              <div className="scroll-mt-20">
+                <FullMatrix />
+              </div>
             </div>
           )}
           {view === "list" && (
@@ -56,11 +83,20 @@ export default function Page() {
             </div>
           )}
         </div>
+
+        {/* Final Selection Area */}
         {isSelected && (
-          <>
+          <div className="animate-fadeIn space-y-8">
             <QualityScore />
-            <YourSelection />
-          </>
+
+            {/* When a user clicks in Matrix or Basic view, it lands here */}
+            <div
+              ref={yourSelectionRef}
+              className="scroll-mt-24 transition-all duration-700"
+            >
+              <YourSelection />
+            </div>
+          </div>
         )}
       </div>
     </section>

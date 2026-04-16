@@ -1,4 +1,6 @@
 "use client";
+
+import { useRef } from "react";
 import { BedDouble, Truck, Users } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedSize, setSelectedQuality } from "@/_lib/store/cartSlice";
@@ -11,6 +13,11 @@ import GuestRequirements from "../RVSelect/GuestRequirements";
 
 export default function BookingEstimator() {
   const dispatch = useDispatch();
+
+  // 1. Create Refs for the sections you want to scroll to
+  const qualitySectionRef = useRef(null);
+  const tripDetailsSectionRef = useRef(null);
+
   const {
     selectedSize,
     selectedQuality,
@@ -20,18 +27,26 @@ export default function BookingEstimator() {
     downPayment,
   } = useSelector((state) => state.cart);
 
+  // 2. Scroll Helper Function
+  const scrollToSection = (ref) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   const handleSizeChange = (key) => {
     dispatch(setSelectedSize(key));
+    // Scroll to Quality Selector after a small delay to allow state to settle
+    setTimeout(() => scrollToSection(qualitySectionRef), 100);
   };
 
   const handleQualityChange = (quality) => {
     dispatch(setSelectedQuality(quality));
-  };
-
-  const getQualityWidth = (scoreRange) => {
-    if (!scoreRange) return 0;
-    const [min, max] = scoreRange.split("-").map(Number);
-    return (min + max) / 2;
+    // Scroll to the next group (Trip Details)
+    setTimeout(() => scrollToSection(tripDetailsSectionRef), 100);
   };
 
   return (
@@ -100,8 +115,11 @@ export default function BookingEstimator() {
         })}
       </div>
 
-      {/* Quality Selector */}
-      <div className="mt-4 mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {/* Quality Selector - Added Ref and Scroll Margin */}
+      <div
+        ref={qualitySectionRef}
+        className="mt-4 mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3 scroll-mt-10"
+      >
         <div className="rounded-xl border border-white/10 bg-white/5 p-3 col-span-3">
           <label className="flex items-center justify-between text-xs text-white/70">
             Tier
@@ -127,11 +145,15 @@ export default function BookingEstimator() {
           <QualityBar qualityScore={qualityScore} />
         </div>
       </div>
-      <div className="text-white flex flex-col gap-4">
+
+      {/* Trip Components - Added Ref and Scroll Margin */}
+      <div
+        ref={tripDetailsSectionRef}
+        className="text-white flex flex-col gap-4 scroll-mt-10"
+      >
         <TripDetails />
         <YourLocation />
         <GuestRequirements />
-        {/* <GuestRequirements /> */}
       </div>
 
       {/* Price Section */}

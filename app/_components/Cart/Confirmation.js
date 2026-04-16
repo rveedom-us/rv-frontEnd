@@ -4,12 +4,12 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import TierBadge from "@/_ui/TierBadge";
 import QualityBadge from "@/_ui/QualityBadge";
-import { X, MapPin, Users } from "lucide-react"; // Added icons for the new section
+import { X, MapPin } from "lucide-react";
 import { createOrder } from "@/_lib/api/orders";
 import { useState } from "react";
 
 export default function Confirmation({ open, onClose, session }) {
-  const email = session.user.email;
+  const email = session?.user?.email;
   const {
     selectedSize,
     selectedQuality,
@@ -29,11 +29,9 @@ export default function Confirmation({ open, onClose, session }) {
 
   if (!open) return null;
 
-  // payment handler
   async function handlePay() {
     try {
       const trimmedDescription = tripDescription.trim();
-
       const data = await createOrder({
         amount_paid: downPayment,
         email: email,
@@ -43,8 +41,8 @@ export default function Confirmation({ open, onClose, session }) {
           price: totalPrice,
           startDate: startDate,
           endDate: endDate,
-          location: location, // Pass location to order
-          guests: guests, // Pass guests to order
+          location: location,
+          guests: guests,
           tripDescription: trimmedDescription || null,
           downPayment: downPayment,
         },
@@ -58,15 +56,15 @@ export default function Confirmation({ open, onClose, session }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn p-0 md:p-4"
       onClick={onClose}
     >
       <div
-        className="w-full h-full md:h-auto md:max-w-6xl md:mx-4 md:rounded-2xl bg-slate-950 text-white border-0 md:border md:border-white/10 shadow-2xl flex flex-col animate-popIn"
+        className="w-full h-full md:h-auto md:max-h-[90vh] md:max-w-6xl bg-slate-950 text-white border-0 md:border md:border-white/10 shadow-2xl flex flex-col animate-popIn md:rounded-2xl overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 pb-32 md:pb-8">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto p-4 md:p-8">
           <div className="bg-slate-900 border border-white/10 rounded-xl p-5 mb-6">
             <div className="flex justify-between">
               <h2 className="text-2xl md:text-3xl font-semibold mb-5">
@@ -122,6 +120,7 @@ export default function Confirmation({ open, onClose, session }) {
                     </p>
                   </div>
                 </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-gray-400">Preferred Size</p>
@@ -139,6 +138,7 @@ export default function Confirmation({ open, onClose, session }) {
                     </p>
                   </div>
                 </div>
+
                 <div className="grid grid-cols-2 gap-3">
                   <div>
                     <p className="text-gray-400 mb-1">Preferred Tier</p>
@@ -150,7 +150,6 @@ export default function Confirmation({ open, onClose, session }) {
                   </div>
                 </div>
 
-                {/* NEW LOCATION AND GUEST DATA SECTION */}
                 <div className="mt-6 pt-6 border-t border-white/10 space-y-4">
                   <div>
                     <p className="text-gray-400 flex items-center gap-1.5 text-xs uppercase tracking-wider">
@@ -197,48 +196,34 @@ export default function Confirmation({ open, onClose, session }) {
             {/* Right: Checkout Steps */}
             <div className="bg-slate-900 border border-white/10 rounded-xl p-5">
               <h3 className="text-lg font-semibold mb-4">
-                Checkout (Pay 5% deposit to lock your RV)
+                Checkout (Pay 5% deposit)
               </h3>
-
               <ol className="list-decimal list-inside text-sm text-gray-300 space-y-2 mb-4">
                 <li>5% deposit now locks price, refundable until confirmed</li>
-                <li>
-                  We confirm RV, arrange logistics, and apply upgrades if
-                  applicable
-                </li>
+                <li>We confirm RV and arrange logistics</li>
                 <li>45% of balance due within 48 hours of confirmation</li>
-                <li>Final balance auto-billed 14 days before start date</li>
-                <li>
-                  Refundable security deposit of $750 auto billed 7 days before
-                  trip
-                </li>
+                <li>Final balance auto-billed 14 days before start</li>
+                <li>Refundable $750 security deposit 7 days before</li>
               </ol>
-
-              <div>
-                <p className="mb-2 text-sm text-gray-300">
-                  Please describe the nature of your trip and any special
-                  requests. The more information you provide, the better we can
-                  sync you up with your ideal RV and experience (optional)
-                </p>
-                <textarea
-                  className="ring ring-white w-full h-40 mb-3 bg-slate-800 text-white p-3 rounded-md focus:outline-none focus:ring-cyan-500 transition-all"
-                  value={tripDescription}
-                  onChange={(e) => setTripDescription(e.target.value)}
-                  placeholder="Tell us about your trip..."
-                ></textarea>
-              </div>
+              <textarea
+                className="ring-1 ring-white/20 w-full h-40 mb-3 bg-slate-800 text-white p-3 rounded-md focus:outline-none focus:ring-2 focus:ring-cyan-500 transition-all"
+                value={tripDescription}
+                onChange={(e) => setTripDescription(e.target.value)}
+                placeholder="Tell us about your trip..."
+              />
             </div>
           </div>
         </div>
 
-        {/* Sticky Bottom Button - Mobile Optimized */}
-        <div className="fixed md:relative bottom-0 left-0 right-0 bg-slate-950 border-t border-white/10 p-4 md:p-5 md:pt-0 md:border-0">
+        {/* Fixed Footer for ALL devices */}
+        <div className="shrink-0 p-4 md:p-6 bg-slate-950 border-t border-white/10">
           <button
             onClick={handlePay}
-            className="w-full bg-linear-to-r from-cyan-400 to-emerald-500 text-black font-semibold px-5 py-4 md:py-3 rounded-lg shadow-lg hover:opacity-90 transition flex items-center justify-center gap-2 text-lg md:text-base"
+            className="w-full bg-linear-to-r from-cyan-400 to-emerald-500 text-black font-bold px-5 py-4 rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-lg"
           >
             <span>Lock in your RV</span>
-            <span className="font-bold">
+            <span className="opacity-70">|</span>
+            <span>
               {new Intl.NumberFormat("en-US", {
                 style: "currency",
                 currency: "USD",
