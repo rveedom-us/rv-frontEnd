@@ -47,7 +47,8 @@ export default function Confirmation({ open, onClose, session }) {
           downPayment: downPayment,
         },
       });
-      window.open(data.url, "_blank", "noopener,noreferrer");
+// window.open(data.url, "_blank", "noopener,noreferrer");
+        window.location.assign(data.url);
     } catch (err) {
       console.error("Error creating order:", err.message);
       toast.error("Failed to create order.");
@@ -219,7 +220,7 @@ export default function Confirmation({ open, onClose, session }) {
         <div className="shrink-0 p-4 md:p-6 bg-slate-950 border-t border-white/10">
           <button
             onClick={handlePay}
-            className="w-full bg-linear-to-r from-cyan-400 to-emerald-500 text-black font-bold px-5 py-4 rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-lg"
+            className="w-full cursor-pointer bg-linear-to-r from-cyan-400 to-emerald-500 text-black font-bold px-5 py-4 rounded-xl shadow-lg hover:brightness-110 active:scale-[0.98] transition-all flex items-center justify-center gap-3 text-lg"
           >
             <span>Lock in your RV</span>
             <span className="opacity-70">|</span>
