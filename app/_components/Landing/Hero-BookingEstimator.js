@@ -1,5 +1,4 @@
 "use client";
-
 import { useRef } from "react";
 import { BedDouble, Truck, Users } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,9 +13,11 @@ import GuestRequirements from "../RVSelect/GuestRequirements";
 export default function BookingEstimator() {
   const dispatch = useDispatch();
 
-  // 1. Create Refs for the sections you want to scroll to
+  // Create individual refs for each landing spot
   const qualitySectionRef = useRef(null);
-  const tripDetailsSectionRef = useRef(null);
+  const tripDetailsRef = useRef(null);
+  const locationRef = useRef(null);
+  const guestReqRef = useRef(null);
 
   const {
     selectedSize,
@@ -27,7 +28,7 @@ export default function BookingEstimator() {
     downPayment,
   } = useSelector((state) => state.cart);
 
-  // 2. Scroll Helper Function
+  // Scroll Helper with smooth behavior
   const scrollToSection = (ref) => {
     if (ref.current) {
       ref.current.scrollIntoView({
@@ -39,19 +40,19 @@ export default function BookingEstimator() {
 
   const handleSizeChange = (key) => {
     dispatch(setSelectedSize(key));
-    // Scroll to Quality Selector after a small delay to allow state to settle
-    setTimeout(() => scrollToSection(qualitySectionRef), 100);
+    // Scroll to Quality with a 150ms delay for state rendering
+    setTimeout(() => scrollToSection(qualitySectionRef), 150);
   };
 
   const handleQualityChange = (quality) => {
     dispatch(setSelectedQuality(quality));
-    // Scroll to the next group (Trip Details)
-    setTimeout(() => scrollToSection(tripDetailsSectionRef), 100);
+    // Scroll to the Trip Details section
+    setTimeout(() => scrollToSection(tripDetailsRef), 150);
   };
 
   return (
     <div className="sm:w-2xl rounded-2xl border border-white/10 bg-linear-to-br from-slate-900 to-slate-800/60 p-5 shadow-[0_0_0_1px_rgba(255,255,255,0.04)] backdrop-blur relative">
-      {/* Badge */}
+      {/* Discount Badge */}
       <div className="absolute -right-6 -top-6 rotate-12 rounded-full bg-cyan-400 px-3 py-1 text-[11px] font-extrabold uppercase tracking-wider text-slate-900 shadow">
         Save {savingPercentage}% avg
       </div>
@@ -65,37 +66,32 @@ export default function BookingEstimator() {
           <h3 className="mt-1 text-lg font-bold text-white">
             Your Flex+ Trip Preview
           </h3>
-          <p className="text-sm text-white/70">
-            Adjust options to see your estimated Flex+ cost.
-          </p>
         </div>
         <Truck className="hidden h-10 w-10 text-cyan-300 sm:block" />
       </div>
 
-      {/* Size Selector */}
+      {/* 1. Size Selector */}
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
         {Object.keys(sizes).map((key) => {
           const s = sizes[key];
+          const isSelected = selectedSize === key;
           return (
             <button
               key={key}
               onClick={() => handleSizeChange(key)}
-              className={`group relative overflow-hidden rounded-xl border px-2 py-3 text-left transition ${
-                selectedSize === key
+              className={`group relative overflow-hidden rounded-xl border px-2 py-3 text-left transition-all duration-300 ${
+                isSelected
                   ? "border-cyan-400/60 bg-cyan-400/10"
                   : "border-white/10 bg-white/5 hover:bg-white/10"
               }`}
               style={{
-                backgroundImage:
-                  selectedSize === key ? `url(${s.img})` : undefined,
+                backgroundImage: isSelected ? `url(${s.img})` : undefined,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}
             >
               <div
-                className={`relative z-10 ${
-                  selectedSize === key ? "backdrop-brightness-90" : ""
-                }`}
+                className={`relative z-10 ${isSelected ? "backdrop-brightness-90" : ""}`}
               >
                 <p className="text-xs font-bold uppercase tracking-widest text-cyan-300">
                   {s.label}
@@ -105,9 +101,8 @@ export default function BookingEstimator() {
                   <span className="opacity-50">•</span>
                   <BedDouble className="h-3.5 w-3.5" /> {s.length}
                 </div>
-                <p className="mt-1 text-[11px] text-white/60">{s.rig}</p>
               </div>
-              {selectedSize === key && (
+              {isSelected && (
                 <div className="absolute inset-0 bg-linear-to-t from-slate-900/65 to-slate-900/0" />
               )}
             </button>
@@ -115,14 +110,14 @@ export default function BookingEstimator() {
         })}
       </div>
 
-      {/* Quality Selector - Added Ref and Scroll Margin */}
+      {/* 2. Quality Selector (Added scroll-mt-24 for large top spacing) */}
       <div
         ref={qualitySectionRef}
-        className="mt-4 mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3 scroll-mt-10"
+        className="mt-4 mb-4 scroll-mt-24 transition-all duration-500"
       >
-        <div className="rounded-xl border border-white/10 bg-white/5 p-3 col-span-3">
+        <div className="rounded-xl border border-white/10 bg-white/5 p-3">
           <label className="flex items-center justify-between text-xs text-white/70">
-            Tier
+            Tier{" "}
             <span className="text-white">
               <QualityBadge quality={qualityScore} />
             </span>
@@ -132,7 +127,7 @@ export default function BookingEstimator() {
               <button
                 key={s}
                 onClick={() => handleQualityChange(s)}
-                className={`rounded-lg px-2 py-1 font-semibold ${
+                className={`rounded-lg px-2 py-1 font-semibold transition-colors ${
                   selectedQuality === s
                     ? "bg-cyan-400 text-slate-900"
                     : "bg-white/5 text-white/80 hover:bg-white/10"
@@ -146,40 +141,39 @@ export default function BookingEstimator() {
         </div>
       </div>
 
-      {/* Trip Components - Added Ref and Scroll Margin */}
-      <div
-        ref={tripDetailsSectionRef}
-        className="text-white flex flex-col gap-4 scroll-mt-10"
-      >
-        <TripDetails />
-        <YourLocation />
-        <GuestRequirements />
+      {/* 3. Trip Components (Individually wrapped with scroll margins) */}
+      <div className="text-white flex flex-col gap-4">
+        <div ref={tripDetailsRef} className="scroll-mt-24">
+          <TripDetails onComplete={() => scrollToSection(locationRef)} />
+        </div>
+
+        <div ref={locationRef} className="scroll-mt-24">
+          {/* Pass the scroll trigger here */}
+          <YourLocation onComplete={() => scrollToSection(guestReqRef)} />
+        </div>
+
+        <div ref={guestReqRef} className="scroll-mt-24">
+          <GuestRequirements />
+        </div>
       </div>
 
-      {/* Price Section */}
+      {/* Price Summary Section */}
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="rounded-2xl border border-white/10 bg-linear-to-br from-slate-900 to-slate-800/60 p-5">
+        <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-5">
           <p className="text-xs text-white/70">Flex+ Estimate</p>
           <p className="text-2xl font-extrabold text-cyan-300">
             ${totalPrice.toFixed(2)}
           </p>
-          <p className="text-xs text-white/50">
-            Includes taxes, prep fee & options
-          </p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-linear-to-br from-slate-900 to-slate-800/60 p-5">
+        <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-5">
           <p className="text-xs text-white/70">Savings</p>
           <p className="text-2xl font-extrabold text-emerald-300">
             {savingPercentage}%
           </p>
-          <p className="text-xs text-white/50">
-            Compared to typical market price
-          </p>
         </div>
-        <div className="rounded-2xl border border-white/10 bg-linear-to-br from-slate-900 to-slate-800/60 p-5">
+        <div className="rounded-2xl border border-white/10 bg-slate-900/50 p-5">
           <p className="text-xs text-white/70">Only 5% Down</p>
-          <p className="text-2xl font-extrabold text-white">${downPayment} </p>
-          <p className="text-xs text-white/50">to lock in your RV</p>
+          <p className="text-2xl font-extrabold text-white">${downPayment}</p>
         </div>
       </div>
     </div>

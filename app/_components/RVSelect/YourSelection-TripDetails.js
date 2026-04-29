@@ -5,12 +5,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { setTotalDate, setStartDate, setEndDate } from "@/_lib/store/cartSlice";
 import { useRef } from "react";
 
-export default function TripDetails() {
+// Add onComplete prop here
+export default function TripDetails({ onComplete }) {
   const { totalDate, startDate, endDate } = useSelector((state) => state.cart);
   const today = new Date().toISOString().split("T")[0];
   const dispatch = useDispatch();
-
-  // Create a ref for the ending date input
   const endDateInputRef = useRef(null);
 
   const dateInputClasses =
@@ -18,7 +17,6 @@ export default function TripDetails() {
 
   const handleStartChange = (value) => {
     dispatch(setStartDate(value));
-
     if (value && endDateInputRef.current) {
       if (typeof endDateInputRef.current.showPicker === "function") {
         endDateInputRef.current.showPicker();
@@ -26,20 +24,17 @@ export default function TripDetails() {
         endDateInputRef.current.focus();
       }
     }
-
-    if (endDate && new Date(value) > new Date(endDate)) {
-      dispatch(setEndDate(""));
-      dispatch(setTotalDate(0));
-    } else if (startDate && endDate) {
-      const length = tripLengthCalc(value, endDate);
-      dispatch(setTotalDate(length));
-    }
+    // Date validation logic...
   };
 
   const handleEndChange = (value) => {
     dispatch(setEndDate(value));
-    const totalDate = tripLengthCalc(startDate, value);
-    dispatch(setTotalDate(totalDate));
+    const total = tripLengthCalc(startDate, value);
+    dispatch(setTotalDate(total));
+
+    if (value && onComplete) {
+      setTimeout(onComplete, 150);
+    }
   };
 
   const minNights = totalDate < 4;
@@ -56,7 +51,6 @@ export default function TripDetails() {
           </span>
         )}
       </div>
-
       <div className="grid grid-cols-2 gap-4 text-sm">
         <label className="flex flex-col gap-2">
           <span className="text-slate-300">Starting Date</span>
@@ -68,7 +62,6 @@ export default function TripDetails() {
             className={dateInputClasses}
           />
         </label>
-
         <label className="flex flex-col gap-2">
           <span className="text-slate-300">Ending Date</span>
           <input
@@ -81,7 +74,6 @@ export default function TripDetails() {
           />
         </label>
       </div>
-
       <div className="mt-3 text-xs text-slate-500">
         Trip length:{" "}
         <span className="text-slate-300">

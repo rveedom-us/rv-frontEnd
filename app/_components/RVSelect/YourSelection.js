@@ -1,59 +1,26 @@
+"use client";
+import { useRef } from "react";
 import VisualCard from "./YourSelection-VisualCard";
 import TripDetails from "./YourSelection-TripDetails";
 import PriceBreakdown from "./YourSelection-PriceBreakdown";
 import YourLocation from "./YourLocation";
 import GuestRequirements from "./GuestRequirements";
 
-// const SIZES = [
-//   {
-//     key: "S",
-//     label: "Small (S)",
-//     length: "18–22 ft",
-//     sleeps: "2–3",
-//     ideal: "Weekend getaways, solo/duo trips",
-//     rig: "Travel Trailer",
-//     // hero/primary image for the card & live preview
-//     // img: `${IMG_BASE}/sizes-S-small-hero.webp`,
-//   },
-//   {
-//     key: "M",
-//     label: "Medium (M)",
-//     length: "23–26 ft",
-//     sleeps: "3–4",
-//     ideal: "Small families, compact comfort",
-//     rig: "Travel Trailer",
-//     // img: `${IMG_BASE}/sizes-M-medium-hero.webp`,
-//   },
-//   {
-//     key: "L",
-//     label: "Large (L)",
-//     length: "27–30 ft",
-//     sleeps: "4–6",
-//     ideal: "Families & friends, extra space",
-//     rig: "Travel Trailer",
-//     // img: `${IMG_BASE}/sizes-L-large-hero.webp`,
-//   },
-//   {
-//     key: "XL",
-//     label: "Extra Large (XL)",
-//     length: "31–34 ft",
-//     sleeps: "6–8",
-//     ideal: "Bigger groups, comfort features",
-//     rig: "Travel Trailer / Fifth Wheel",
-//     // img: `${IMG_BASE}/sizes-XL-extralarge-hero.webp`,
-//   },
-//   {
-//     key: "XXL",
-//     label: "Ultimate (XXL)",
-//     length: "35–40+ ft",
-//     sleeps: "8–10+",
-//     ideal: "Long stays, premium amenities",
-//     rig: "Fifth Wheel / Motorcoach",
-//     // img: `${IMG_BASE}/sizes-XXL-ultimate-hero.webp`,
-//   },
-// ];
-
 export default function YourSelection() {
+  // 1. Create Refs for the scroll targets
+  const locationRef = useRef(null);
+  const guestReqRef = useRef(null);
+
+  // 2. Scroll Helper
+  const scrollToSection = (ref) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <section
       id="yourselection"
@@ -71,10 +38,19 @@ export default function YourSelection() {
 
       <div className="grid lg:grid-cols-2 gap-6 items-start pt-5">
         <VisualCard />
+
         <div className="space-y-4">
-          <TripDetails />
-          <YourLocation />
-          <GuestRequirements />
+          {/* 3. Wrap components and pass onComplete triggers */}
+          <TripDetails onComplete={() => scrollToSection(locationRef)} />
+
+          <div ref={locationRef} className="scroll-mt-24">
+            <YourLocation onComplete={() => scrollToSection(guestReqRef)} />
+          </div>
+
+          <div ref={guestReqRef} className="scroll-mt-24">
+            <GuestRequirements />
+          </div>
+
           <PriceBreakdown />
 
           <div className="rounded-xl border border-slate-700 p-3 text-xs text-slate-400 bg-slate-900">

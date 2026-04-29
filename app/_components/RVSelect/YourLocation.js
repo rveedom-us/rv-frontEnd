@@ -1,3 +1,4 @@
+"use client";
 import US_STATES from "@/_lists/UsStates";
 import { Loader, LocateFixed, Search } from "lucide-react";
 import DeliveryOptions from "./DeliveryOptions"; // Adjust path as needed
@@ -5,10 +6,9 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setLocation } from "@/_lib/store/cartSlice";
 
-const YourLocation = ({ onChange }) => {
+const YourLocation = ({ onChange, onComplete }) => {
   const dispatch = useDispatch();
   const reduxLocation = useSelector((state) => state.cart.location);
-
   const [selectedState, setSelectedState] = useState(
     reduxLocation?.state || "",
   );
@@ -33,7 +33,6 @@ const YourLocation = ({ onChange }) => {
       setSuggestions([]);
       return;
     }
-
     setIsLoading(true);
     try {
       const res = await fetch(
@@ -66,7 +65,6 @@ const YourLocation = ({ onChange }) => {
     const value = e.target.value;
     setQuery(value);
     setSelectedPlace(null);
-
     clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       fetchSuggestions(value);
@@ -77,22 +75,23 @@ const YourLocation = ({ onChange }) => {
     const stateName = place.address?.state?.toLowerCase();
     const stateCode =
       US_STATES.find((s) => s.label.toLowerCase() === stateName)?.value || "";
-
     const selected = {
       formattedAddress: place.display_name,
       lat: parseFloat(place.lat),
       lng: parseFloat(place.lon),
       state: stateCode,
     };
-
     setQuery(place.display_name);
     setSelectedPlace(selected);
     setShowSuggestions(false);
     setSuggestions([]);
-
     if (stateCode) setSelectedState(stateCode);
-
     stableOnChange(selected);
+
+    // Trigger the scroll to Guest Requirements
+    if (onComplete) {
+      setTimeout(onComplete, 200);
+    }
   };
 
   useEffect(() => {
@@ -110,18 +109,22 @@ const YourLocation = ({ onChange }) => {
   }, []);
 
   const mapUrl = selectedPlace
-    ? `https://www.openstreetmap.org/export/embed.html?bbox=${selectedPlace.lng - 0.005},${selectedPlace.lat - 0.005},${selectedPlace.lng + 0.005},${selectedPlace.lat + 0.005}&layer=mapnik&marker=${selectedPlace.lat},${selectedPlace.lng}`
+    ? `https://www.openstreetmap.org/export/embed.html?bbox=${
+        selectedPlace.lng - 0.005
+      },${selectedPlace.lat - 0.005},${selectedPlace.lng + 0.005},${
+        selectedPlace.lat + 0.005
+      }&layer=mapnik&marker=${selectedPlace.lat},${selectedPlace.lng}`
     : null;
 
   return (
     <div className="rounded-2xl border border-slate-700 p-4 bg-slate-900 shadow-xl">
       <h2 className="font-bold text-slate-100 flex items-center gap-2">
         <span role="img" aria-label="map">
-          🗺️
+          {" "}
+          🗺️{" "}
         </span>{" "}
         Destination
       </h2>
-
       {/* Location Search */}
       <div className="mt-5" ref={wrapperRef}>
         <label
@@ -136,7 +139,6 @@ const YourLocation = ({ onChange }) => {
           ) : (
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500 pointer-events-none" />
           )}
-
           <input
             id="address-input"
             type="text"
@@ -147,7 +149,6 @@ const YourLocation = ({ onChange }) => {
             autoComplete="off"
             className="w-full bg-slate-800 text-slate-200 placeholder:text-slate-600 border border-slate-700 focus:ring-1 focus:ring-blue-500 focus:border-blue-500 rounded-md pl-9 pr-3 py-2 text-sm transition-all"
           />
-
           {showSuggestions && suggestions.length > 0 && (
             <ul className="absolute z-50 mt-1 w-full bg-slate-800 border border-slate-600 rounded-md shadow-2xl max-h-60 overflow-y-auto">
               {suggestions.map((place) => (
@@ -168,7 +169,6 @@ const YourLocation = ({ onChange }) => {
             </ul>
           )}
         </div>
-
         {selectedPlace && (
           <div className="mt-2 text-xs text-blue-400 flex items-start gap-2 animate-in fade-in slide-in-from-top-1">
             <LocateFixed className="text-slate-500 w-4 h-4 mt-0.5 shrink-0" />
@@ -178,12 +178,10 @@ const YourLocation = ({ onChange }) => {
           </div>
         )}
       </div>
-
       {/* Delivery Options */}
       <div className="mt-5">
         <DeliveryOptions />
       </div>
-
       {mapUrl && (
         <div className="mt-6 rounded-xl overflow-hidden border border-slate-700 h-40 bg-slate-800 shadow-inner">
           <iframe
@@ -199,5 +197,4 @@ const YourLocation = ({ onChange }) => {
     </div>
   );
 };
-
 export default YourLocation;
