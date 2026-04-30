@@ -1,9 +1,9 @@
 "use client";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { userStatusUpdate } from "@/_lib/api/orders";
 import { statuses } from "@/_lists/status";
 import { toast } from "react-toastify";
-import { X } from "lucide-react";
+import { X, CheckCircle2 } from "lucide-react";
 
 export default function AdminStatusDrawer({
   open,
@@ -12,93 +12,130 @@ export default function AdminStatusDrawer({
   currentStatus,
 }) {
   const queryClient = useQueryClient();
+
   if (!open) return null;
-  const curStatus = currentStatus.toUpperCase();
+  const curStatus = currentStatus?.toUpperCase();
 
-  function handleChangeStatus(key, orderId) {
-    toast(({ closeToast }) => (
-      <div className="flex flex-col gap-3">
-        <p className="text-sm font-semibold">
-          Are you sure you wanna change status to{" "}
-          <span className="text-slate-500">{key}</span>?
-        </p>
+  const handleUpdate = async (key) => {
+    try {
+      await userStatusUpdate(orderId, key);
+      queryClient.invalidateQueries(["orders"]);
+      toast.success(`Status updated to ${key}`);
+      onClose();
+    } catch (err) {
+      toast.error("Failed to update status");
+    }
+  };
 
-        <div className="flex gap-3">
-          <button
-            className="px-3 py-1 bg-green-600 rounded text-white"
-            onClick={async () => {
-              await userStatusUpdate(orderId, key);
-              queryClient.invalidateQueries(["orders"]);
-              closeToast();
-              onClose();
-            }}
-          >
-            Yes
-          </button>
-
-          <button
-            className="px-3 py-1 bg-red-600 rounded text-white"
-            onClick={closeToast}
-          >
-            No
-          </button>
+  const confirmChange = (key) => {
+    toast(
+      ({ closeToast }) => (
+        <div className="p-1">
+          <p className="text-sm font-medium mb-3">
+            Update status to{" "}
+            <span className="font-bold text-indigo-400">{key}</span>?
+          </p>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                handleUpdate(key);
+                closeToast();
+              }}
+              className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-1.5 rounded-lg text-xs transition-colors"
+            >
+              Confirm
+            </button>
+            <button
+              onClick={closeToast}
+              className="bg-slate-800 text-slate-300 px-4 py-1.5 rounded-lg text-xs"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
-      </div>
-    ));
-  }
+      ),
+      { theme: "dark" },
+    );
+  };
 
   return (
-    <div className="fixed inset-0 z-40">
+    <div className="fixed inset-0 z-50 flex justify-end">
+      {/* Backdrop */}
       <div
         onClick={onClose}
-        className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-300 opacity-95"
+        className="absolute inset-0 bg-slate-950/60 backdrop-blur-md transition-opacity animate-fadeIn"
       />
 
-      <div className="absolute top-1/2 right-0 translate-y-[-50%] w-full sm:w-3/4 md:w-1/2 lg:w-1/3 xl:w-1/4 2xl:w-1/6 h-[60vh] sm:h-[55vh] md:h-[50vh] bg-slate-950 shadow-xl rounded-l-2xl transform animate-slideInRight z-50">
-        <div className="p-3 sm:p-4 flex justify-between items-center border-b">
-          <h2 className="font-bold text-sm sm:text-base">
-            Change status for{" "}
-            <span className="text-xs text-slate-400 font-semibold block sm:inline">
-              {orderId}{" "}
-            </span>
-            to
-          </h2>
+      {/* Drawer Panel */}
+      <div className="relative w-full max-w-md h-full bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col animate-slideInRight">
+        {/* Header */}
+        <div className="p-6 border-b border-slate-800 flex justify-between items-center bg-slate-900/50">
+          <div>
+            <h2 className="text-xl font-semibold text-white">Update Status</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Order ID:{" "}
+              <span className="font-mono text-indigo-400">{orderId}</span>
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="text-slate-700 hover:scale-110 hover:cursor-pointer text-xl font-bold"
+            className="p-2 hover:bg-slate-800 rounded-full transition-colors text-slate-400 hover:text-white"
           >
-            <X className="w-5 h-5 sm:w-6 sm:h-6" />
+            <X size={20} />
           </button>
         </div>
 
-        <ul className="p-3 sm:p-4 flex flex-col gap-2 overflow-y-auto max-h-[calc(60vh-80px)] sm:max-h-[calc(55vh-80px)] md:max-h-[calc(50vh-80px)]">
+        {/* Status List */}
+        <div className="flex-1 overflow-y-auto p-6 space-y-3">
           {Object.entries(statuses).map(([key, items]) => {
             const isSelected = key === curStatus;
             return (
-              <li
+              <button
                 key={key}
-                onClick={() => {
-                  if (isSelected) return;
-                  handleChangeStatus(key, orderId);
-                }}
+                disabled={isSelected}
+                onClick={() => confirmChange(key)}
                 className={`
-                  relative p-2 sm:p-3 rounded-md bg-linear-to-r ${items.className} 
-                  transition-all scale-90 group text-sm sm:text-base
+                  w-full group relative flex items-center justify-between p-4 rounded-xl border transition-all duration-200
                   ${
                     isSelected
-                      ? "opacity-100 border border-red-400 cursor-not-allowed"
-                      : "cursor-pointer hover:scale-100"
+                      ? "bg-indigo-500/10 border-indigo-500/50 cursor-default"
+                      : "bg-slate-800/40 border-slate-700 hover:border-slate-500 hover:bg-slate-800 shadow-sm"
                   }
                 `}
               >
-                {key}
-                <span className="absolute left-0 bottom-10 bg-black text-white text-xs p-2 rounded opacity-0 group-hover:opacity-90 transition-opacity duration-200 z-50 hidden sm:block">
-                  {items.description}
-                </span>
-              </li>
+                <div className="flex flex-col items-start">
+                  <span
+                    className={`font-bold text-sm uppercase tracking-wider ${isSelected ? "text-indigo-400" : "text-slate-200"}`}
+                  >
+                    {key}
+                  </span>
+                  <span className="text-xs text-slate-500 mt-1 text-left line-clamp-1">
+                    {items.description}
+                  </span>
+                </div>
+
+                {isSelected && (
+                  <CheckCircle2 size={18} className="text-indigo-500" />
+                )}
+                {!isSelected && (
+                  <div
+                    className={`w-2 h-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity ${items.className?.split(" ")[0] || "bg-slate-400"}`}
+                  />
+                )}
+              </button>
             );
           })}
-        </ul>
+        </div>
+
+        {/* Footer */}
+        <div className="p-6 bg-slate-950/30 border-t border-slate-800">
+          <button
+            onClick={onClose}
+            className="w-full py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium transition-all"
+          >
+            Close Panel
+          </button>
+        </div>
       </div>
     </div>
   );
